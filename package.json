@@ -1,0 +1,45 @@
+{
+  "name": "node-medium-api",
+  "version": "1.0.0",
+  "description": "Just another medium clone made with Node and Typescript",
+  "main": "index.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc",
+    "server": "tsc-watch --onSuccess 'nodemon ./bin/www'"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/therealedsheenan/typescript-gen.git"
+  },
+  "keywords": [
+    "typescript",
+    "express-generator"
+  ],
+  "author": "Sheenan Tenepre",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/therealedsheenan/typescript-gen/issues"
+  },
+  "homepage": "https://github.com/therealedsheenan/typescript-gen#readme",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "cors": "^2.8.5",
+    "debug": "^4.1.1",
+    "event-stream": "^4.0.1",
+    "express": "^4.16.4",
+    "morgan": "^1.9.1",
+    "nodemon": "^1.18.9",
+    "ts-node": "^7.0.1",
+    "tslint": "^5.12.1",
+    "typescript": "^3.2.4"
+  },
+  "devDependencies": {
+    "@types/body-parser": "^1.17.0",
+    "@types/cors": "^2.8.4",
+    "@types/express": "^4.16.0",
+    "@types/morgan": "^1.7.35",
+    "concurrently": "^4.1.0",
+    "tsc-watch": "^1.0.31"
+  }
+}
