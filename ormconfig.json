@@ -1,0 +1,10 @@
+{
+  "type": "postgres",
+  "host": "localhost",
+  "port": 5432,
+  "username": "root",
+  "password": "root",
+  "database": "node-medium-api",
+  "entities": ["entities/**.entity{.ts,.js}"],
+  "autoSchemaSync": true
+}
