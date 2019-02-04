@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc",
-    "server": "tsc-watch --onSuccess 'nodemon ./bin/www'"
+    "server": "tsc-watch --onSuccess 'nodemon ./build/app.js'"
   },
   "repository": {
     "type": "git",
