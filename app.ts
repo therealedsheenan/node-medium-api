@@ -20,6 +20,8 @@ createConnection().then(async connection => {
   app.use(bodyParser.urlencoded({extended: false}));
   app.use(express.static(path.join(__dirname, 'public')));
 
+  // routes
+  app.use('/', indexRoutes);
 
   // error handlers
   app.use((req: Request, res: Response, next: NextFunction) => {
@@ -37,9 +39,6 @@ createConnection().then(async connection => {
 
     res.status(statusCode).send('Server Error');
   });
-
-  // routes
-  app.use('/', indexRoutes);
 
   // port
   const port = process.env.PORT || '3000';
