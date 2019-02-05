@@ -5,6 +5,6 @@
   "username": "root",
   "password": "root",
   "database": "node-medium-api",
-  "entities": ["entities/**{.ts,.js}"],
+  "entities": ["build/entities/**{.ts,.js}"],
   "autoSchemaSync": true
 }
