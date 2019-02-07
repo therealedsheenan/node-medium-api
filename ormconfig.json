@@ -6,5 +6,9 @@
   "password": "root",
   "database": "node-medium-api",
   "entities": ["build/entities/**{.ts,.js}"],
-  "autoSchemaSync": true
+  "migrations": ["build/migrations/**{.ts,.js}"],
+  "autoSchemaSync": true,
+  "cli": {
+    "migrationsDir": "migrations"
+  }
 }
