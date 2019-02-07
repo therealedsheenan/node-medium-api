@@ -1,7 +1,7 @@
 {
   "extends": "tslint-config-standard",
   "rules": {
-    "no-console": [true, "log", "error"],
+    "no-console": [false, "log", "error"],
     "semicolon": [true, "always"]
   }
 }
