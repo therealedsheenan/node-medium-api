@@ -4,7 +4,8 @@ import {
   Column,
   PrimaryGeneratedColumn,
   ManyToOne,
-  OneToMany
+  OneToMany,
+  BaseEntity
 } from 'typeorm';
 import { Length, IsDate } from 'class-validator';
 
@@ -12,7 +13,7 @@ import { User } from './user';
 import { Comment } from './comment';
 
 @Entity()
-export class Post {
+export class Post extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -26,19 +27,22 @@ export class Post {
 
   @Column('date')
   @IsDate()
-  createDate: string;
+  createDate: Date;
 
-  @Column('date')
+  @Column('date', { default: undefined, nullable: true })
   @IsDate()
-  updateDate: string;
+  updateDate: Date;
 
-  @Column('date')
+  @Column('date', { default: undefined, nullable: true })
   @IsDate()
-  publishedDate: string;
+  publishedDate: Date;
 
-  @OneToMany(type => Comment, comment => comment.post)
+  @OneToMany(type => Comment, comment => comment.post, {
+    cascade: true
+  })
   comments: Comment[];
 
-  @ManyToOne(type => User, author => author.posts)
+  @ManyToOne(type => User, author => author.posts, { nullable: false })
   author: User;
+
 }

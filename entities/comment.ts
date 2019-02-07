@@ -1,5 +1,11 @@
 import 'reflect-metadata';
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  ManyToOne,
+  JoinTable
+} from 'typeorm';
 import { Length, IsDate } from 'class-validator';
 import { Post } from './post';
 
@@ -8,7 +14,7 @@ export class Comment {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({ nullable: false })
   @Length(4, 20)
   author: string;
 
@@ -18,11 +24,14 @@ export class Comment {
 
   @Column('date')
   @IsDate()
-  createDate: string;
+  createDate: Date;
 
   @Column()
   approvedComment: boolean;
 
-  @ManyToOne(type => Post, post => post.comments)
+  @ManyToOne(type => Post, post => post.comments, {
+    nullable: false
+  })
+  @JoinTable()
   post: Post;
 }
