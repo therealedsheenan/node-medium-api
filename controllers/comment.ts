@@ -1,22 +1,22 @@
-"use strict";
+'use strict';
 
-import { Router, Request, Response, NextFunction } from "express";
-import { getConnection } from "typeorm";
-import { validate } from "class-validator";
+import { Router, Request, Response, NextFunction } from 'express';
+import { getConnection } from 'typeorm';
+import { validate } from 'class-validator';
 
-import { Comment } from "../entities/comment";
-import { Post } from "../entities/post";
+import { Comment } from '../entities/comment';
+import { Post } from '../entities/post';
 
 const router: Router = Router();
 
 // Get all comments from a specific postID
 router.get(
-  "/post/:postId/comments/",
+  '/post/:postId/comments/',
   async (req: Request, res: Response, next: NextFunction) => {
     const postId = req.params.postId;
     const postRepo = getConnection().getRepository(Post);
     const comments = await postRepo.findOne(postId, {
-      relations: ["comments"]
+      relations: ['comments']
     });
     return res.json({ comments });
   }
@@ -24,7 +24,7 @@ router.get(
 
 // Get comment via :commentID
 router.get(
-  "/comments/:commentId",
+  '/comments/:commentId',
   (req: Request, res: Response, next: NextFunction) => {
     const commentId = req.params.commentId;
     const commentRepo = getConnection().getRepository(Comment);
@@ -35,7 +35,7 @@ router.get(
 
 // Create new comment
 router.post(
-  "/post/:postId/comments/new",
+  '/post/:postId/comments/new',
   async (req: Request, res: Response, next: NextFunction) => {
     // comments data
     const commentBody = req.body.comment;
@@ -53,7 +53,7 @@ router.post(
     const commentErrors = await validate(newComment);
 
     if (commentErrors.length > 0) {
-      throw new Error("Comments: Validation failed.");
+      throw new Error('Comments: Validation failed.');
     } else {
       const comment = (await commentRepo.save(newComment)) as Comment;
       // post data
@@ -69,7 +69,7 @@ router.post(
 
 // Update comment via :commentID
 router.put(
-  "/comments/:commentId",
+  '/comments/:commentId',
   async (req: Request, res: Response, next: NextFunction) => {
     const commentId = req.params.commentId;
     const commentRepo = getConnection().getRepository(Comment);
@@ -83,7 +83,7 @@ router.put(
 
 // Delete comment via :commentID
 router.delete(
-  "/comments/:commentId",
+  '/comments/:commentId',
   async (req: Request, res: Response, next: NextFunction) => {
     const commentId = req.params.commentId;
     const commentRepo = getConnection().getRepository(Comment);

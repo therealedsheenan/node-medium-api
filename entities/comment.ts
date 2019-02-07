@@ -1,7 +1,7 @@
-import "reflect-metadata";
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from "typeorm";
-import { Length, IsDate } from "class-validator";
-import { Post } from "./post";
+import 'reflect-metadata';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
+import { Length, IsDate } from 'class-validator';
+import { Post } from './post';
 
 @Entity()
 export class Comment {
@@ -16,7 +16,7 @@ export class Comment {
   @Length(4, 200)
   text: string;
 
-  @Column("date")
+  @Column('date')
   @IsDate()
   createDate: string;
 

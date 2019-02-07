@@ -1,7 +1,7 @@
-import "reflect-metadata";
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from "typeorm";
+import 'reflect-metadata';
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
 
-import { Post } from "./post";
+import { Post } from './post';
 
 @Entity()
 export class User {

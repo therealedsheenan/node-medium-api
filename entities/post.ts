@@ -1,15 +1,15 @@
-import "reflect-metadata";
+import 'reflect-metadata';
 import {
   Entity,
   Column,
   PrimaryGeneratedColumn,
   ManyToOne,
   OneToMany
-} from "typeorm";
-import { Length, IsDate } from "class-validator";
+} from 'typeorm';
+import { Length, IsDate } from 'class-validator';
 
-import { User } from "./user";
-import { Comment } from "./comment";
+import { User } from './user';
+import { Comment } from './comment';
 
 @Entity()
 export class Post {
@@ -24,15 +24,15 @@ export class Post {
   @Length(4, 200)
   text: string;
 
-  @Column("date")
+  @Column('date')
   @IsDate()
   createDate: string;
 
-  @Column("date")
+  @Column('date')
   @IsDate()
   updateDate: string;
 
-  @Column("date")
+  @Column('date')
   @IsDate()
   publishedDate: string;
 
