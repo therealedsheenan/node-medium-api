@@ -1,5 +1,6 @@
 import 'reflect-metadata';
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
+import { Post } from "./post";
 
 @Entity()
 export class Comment {
@@ -13,10 +14,12 @@ export class Comment {
   @Column()
   text: string;
 
-  @Column()
+  @Column("date")
   createDate: string;
 
   @Column()
   approvedComment: boolean;
 
+  @ManyToOne(type => Post, post => post.comments)
+  post: Post;
 }
