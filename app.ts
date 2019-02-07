@@ -33,13 +33,12 @@ createConnection().then(async connection => {
     next(err);
   });
 
-  app.use((err: any, req: Request, res: Response, next: NextFunction) => {
-    const statusCode = err.status || 500;
+  app.use((errors: any, req: Request, res: Response, next: NextFunction) => {
+    const statusCode = errors.status || 500;
+    res.locals.message = errors.message;
+    res.locals.error = req.app.get('env') === 'development' ? errors : {};
 
-    res.locals.message = err.message;
-    res.locals.error = req.app.get('env') === 'development' ? err : {};
-
-    res.status(statusCode).send('Server Error');
+    res.status(statusCode).json({ errors });
   });
 
   // port
