@@ -1,17 +1,12 @@
-'use strict';
+"use strict";
 
-import { Router, Request, Response, NextFunction } from 'express';
-// import { getConnection } from 'typeorm';
-// import { User } from '../entities/user';
-
+import { Router, Request, Response, NextFunction } from "express";
 
 const router: Router = Router();
 
-// Sample endpoint
-router.get('/', (req: Request, res: Response, next: NextFunction) => {
-  // const userRepo = getConnection().getRepository(User);
-  // console.log(userRepo);
-  res.send('Hello world!');
+// index endpoint
+router.get("/", (req: Request, res: Response, next: NextFunction) => {
+  res.send("Hello world!");
 });
 
 export const indexRoutes: Router = router;
