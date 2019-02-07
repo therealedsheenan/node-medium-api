@@ -2,6 +2,8 @@
 
 import { Router, Request, Response, NextFunction } from 'express';
 import { getConnection } from 'typeorm';
+import { validate } from 'class-validator';
+
 import { Comment } from '../entities/comment';
 import { Post } from '../entities/post';
 
@@ -33,11 +35,19 @@ router.post('/post/new', async (req: Request, res: Response, next: NextFunction)
   // @ts-ignore
   const newPost = new Post({
     ...postBody,
+    createDate: Date.now()
   }) as Post;
 
-  const post = await postRepo.save(newPost) as Post;
+  // run post validations
+  const postErrors = await validate(newPost);
 
-  return res.json({ post: post });
+  if (postErrors.length > 0) {
+    throw new Error('Posts: Validation failed.');
+  } else {
+    const post = await postRepo.save(newPost) as Post;
+
+    return res.json({ post: post });
+  }
 });
 
 // Update post via :postId

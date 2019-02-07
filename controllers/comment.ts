@@ -2,6 +2,9 @@
 
 import { Router, Request, Response, NextFunction } from 'express';
 import { getConnection } from 'typeorm';
+import { validate } from 'class-validator';
+
+
 import { Comment } from '../entities/comment';
 import { Post } from '../entities/post';
 
@@ -34,18 +37,25 @@ router.post('/post/:postId/comments/new', async (req: Request, res: Response, ne
   // @ts-ignore
   const newComment = new Comment({
     ...commentBody,
-    approvedComment: false
+    approvedComment: false,
+    createDate: Date.now()
   }) as Comment;
 
-  const comment = await commentRepo.save(newComment) as Comment;
+  // run comment validations
+  const commentErrors = await validate(newComment);
 
-  // post data
-  const postId = req.body.postId;
-  const postRepo = getConnection().getRepository(Post);
-  const post = await postRepo.findOne(postId, {}) as Post;
-  post.comments.push(comment);
+  if (commentErrors.length > 0) {
+    throw new Error('Comments: Validation failed.');
+  } else {
+    const comment = await commentRepo.save(newComment) as Comment;
+    // post data
+    const postId = req.body.postId;
+    const postRepo = getConnection().getRepository(Post);
+    const post = await postRepo.findOne(postId, {}) as Post;
+    post.comments.push(comment);
 
-  return res.json({ post: await postRepo.save(post) });
+    return res.json({ post: await postRepo.save(post) });
+  }
 });
 
 // Update comment via :commentID
