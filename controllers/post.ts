@@ -1,9 +1,10 @@
 import { Router, Request, Response, NextFunction } from 'express';
-import { getConnection } from 'typeorm';
+import { getConnection, getRepository } from 'typeorm';
 import { validate } from 'class-validator';
 
 import { Comment } from '../entities/comment';
 import { Post } from '../entities/post';
+import { User } from '../entities/user';
 
 const router: Router = Router();
 
@@ -11,20 +12,19 @@ const router: Router = Router();
 router.get(
   '/posts/',
   async (req: Request, res: Response, next: NextFunction) => {
-    const postRepo = getConnection().getRepository(Post);
-    const post = await postRepo.find({ relations: ['comments'] });
-    return res.json({ post });
+    const posts = await getRepository(Post).find();
+    res.json({ posts });
   }
 );
 
 // Get post via :postID
 router.get(
   '/post/:postId',
-  (req: Request, res: Response, next: NextFunction) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     const postId = req.params.postId;
     const postRepo = getConnection().getRepository(Post);
-    const post = postRepo.findOne(postId, {});
-    return res.json({ post });
+    const post = await postRepo.findOne(postId, {});
+    res.json({ post });
   }
 );
 
@@ -36,22 +36,25 @@ router.post(
     const postBody = req.body.post;
     const postRepo = getConnection().getRepository(Post);
 
+    // TODO: change next lines to actual logged in user
+    const users = await getRepository(User).find() as User[];
+
     // assign values
-    // @ts-ignore
-    const newPost = new Post({
+    const newPost = postRepo.create({
       ...postBody,
-      createDate: Date.now()
-    }) as Post;
+      createDate: new Date(),
+      updateDate: new Date(),
+      user: users[0] // TODO: change next lines to actual logged in user
+    });
 
     // run post validations
     const postErrors = await validate(newPost);
 
-    if (postErrors.length > 0) {
-      throw new Error('Posts: Validation failed.');
+    if (!postErrors) {
+      const post = await postRepo.save(newPost);
+      res.json({ post: post });
     } else {
-      const post = (await postRepo.save(newPost)) as Post;
-
-      return res.json({ post: post });
+      next(postErrors);
     }
   }
 );
@@ -76,9 +79,12 @@ router.delete(
   async (req: Request, res: Response, next: NextFunction) => {
     const postId = req.params.postId;
     const postRepo = getConnection().getRepository(Post);
-    await postRepo.delete(postId);
-    const posts = await postRepo.find({});
 
+    // nullify publish date
+    await postRepo.update({ id: postId }, {
+      publishedDate: undefined
+    });
+    const posts = await postRepo.find({});
     return res.json({ posts });
   }
 );
