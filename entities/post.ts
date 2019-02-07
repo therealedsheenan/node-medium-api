@@ -1,5 +1,8 @@
 import 'reflect-metadata';
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, OneToMany } from 'typeorm';
+
+import { User } from './user';
+import { Comment } from './comment';
 
 @Entity()
 export class Post {
@@ -13,16 +16,18 @@ export class Post {
   @Column()
   text: string;
 
-  @Column()
+  @Column("date")
   createDate: string;
 
-  @Column()
+  @Column("date")
   updateDate: string;
 
-  @Column()
+  @Column("date")
   publishedDate: string;
 
-  @Column()
-  author: string;
+  @OneToMany(type => Comment, comment => comment.post)
+  comments: Comment[];
 
+  @ManyToOne(type => User, author => author.posts)
+  author: User;
 }
