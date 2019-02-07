@@ -37,7 +37,7 @@ createConnection(options).then(async connection => {
       title: faker.random.words(4),
       text: faker.lorem.paragraph(),
       createDate: new Date(),
-      author: user.id
+      author: user
     });
 
     await postRepo.save(newPost);
