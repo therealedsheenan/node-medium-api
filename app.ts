@@ -8,6 +8,8 @@ import logger from 'morgan';
 import * as path from 'path';
 import cors from 'cors';
 import { indexRoutes } from './controllers';
+import { commentsRoutes } from './controllers/comment';
+import { postsRoutes } from './controllers/post';
 import http from 'http';
 
 createConnection().then(async connection => {
@@ -22,6 +24,8 @@ createConnection().then(async connection => {
 
   // routes
   app.use('/', indexRoutes);
+  app.use(postsRoutes);
+  app.use(commentsRoutes);
 
   // error handlers
   app.use((req: Request, res: Response, next: NextFunction) => {
