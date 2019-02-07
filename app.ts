@@ -1,5 +1,3 @@
-'use strict';
-
 import 'reflect-metadata';
 import { createConnection } from 'typeorm';
 import express, { Request, Response, NextFunction } from 'express';

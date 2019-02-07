@@ -1,5 +1,3 @@
-'use strict';
-
 import { Router, Request, Response, NextFunction } from 'express';
 import { getConnection } from 'typeorm';
 import { validate } from 'class-validator';
