@@ -9,6 +9,7 @@ import { indexRoutes } from './controllers';
 import { commentsRoutes } from './controllers/comment';
 import { postsRoutes } from './controllers/post';
 import http from 'http';
+import errorhandler from 'api-error-handler';
 
 createConnection().then(async connection => {
   const app = express();
@@ -29,17 +30,11 @@ createConnection().then(async connection => {
   app.use((req: Request, res: Response, next: NextFunction) => {
     const err: any = new Error('Not Found');
     err.status = 404;
-
     next(err);
   });
 
-  app.use((errors: any, req: Request, res: Response, next: NextFunction) => {
-    const statusCode = errors.status || 500;
-    res.locals.message = errors.message;
-    res.locals.error = req.app.get('env') === 'development' ? errors : {};
-
-    res.status(statusCode).json({ errors });
-  });
+  // send json error handler
+  app.use(errorhandler());
 
   // port
   const port = process.env.PORT || '3000';
