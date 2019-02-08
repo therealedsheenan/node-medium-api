@@ -13,10 +13,17 @@ router.get(
   async (req: Request, res: Response, next: NextFunction) => {
     const postId = req.params.postId;
     const postRepo = getConnection().getRepository(Post);
-    const comments = await postRepo.findOne(postId, {
-      relations: ['comments']
-    });
-    return res.json({ comments });
+    const comments = await postRepo
+      .findOne(postId, {
+        relations: ['comments']
+      })
+      .catch((e: Error) => next(e));
+
+    if (!comments) {
+      next();
+    }
+
+    res.json({ comments });
   }
 );
 
@@ -26,8 +33,15 @@ router.get(
   (req: Request, res: Response, next: NextFunction) => {
     const commentId = req.params.commentId;
     const commentRepo = getConnection().getRepository(Comment);
-    const comment = commentRepo.findOne(commentId, {});
-    return res.json({ comment });
+    const comment = commentRepo
+      .findOne(commentId, {})
+      .catch((e: Error) => next(e));
+
+    if (!comment) {
+      next();
+    }
+
+    res.json({ comment });
   }
 );
 
@@ -53,14 +67,33 @@ router.post(
     if (commentErrors.length > 0) {
       throw new Error('Comments: Validation failed.');
     } else {
-      const comment = (await commentRepo.save(newComment)) as Comment;
+      const comment = (await commentRepo
+        .save(newComment)
+        .catch((e: Error) => next(e))) as Comment;
+
       // post data
       const postId = req.body.postId;
       const postRepo = getConnection().getRepository(Post);
-      const post = (await postRepo.findOne(postId, {})) as Post;
+
+      const post = (await postRepo
+        .findOne(postId, {})
+        .catch((e: Error) => next(e))) as Post;
+
+      if (!post) {
+        next();
+      }
+
+      // add comments to post
       post.comments.push(comment);
 
-      return res.json({ post: await postRepo.save(post) });
+      // save post
+      const updatedPost = await postRepo
+        .save(post)
+        .catch((e: Error) => next(e));
+
+      res.json({
+        post: updatedPost
+      });
     }
   }
 );
@@ -73,9 +106,15 @@ router.put(
     const commentRepo = getConnection().getRepository(Comment);
     const commentBody = req.body.comment;
 
-    const comment = await commentRepo.update({ id: commentId }, commentBody);
+    const comment = await commentRepo
+      .update({ id: commentId }, commentBody)
+      .catch((e: Error) => next(e));
 
-    return res.json({ comment });
+    if (!comment) {
+      next();
+    }
+
+    res.json({ comment });
   }
 );
 
@@ -86,9 +125,13 @@ router.delete(
     const commentId = req.params.commentId;
     const commentRepo = getConnection().getRepository(Comment);
     await commentRepo.delete(commentId);
-    const comments = await commentRepo.find({});
+    const comments = await commentRepo.find({}).catch((e: Error) => next(e));
 
-    return res.json({ comments });
+    if (!comments) {
+      next();
+    }
+
+    res.json({ comments });
   }
 );
 

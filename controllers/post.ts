@@ -12,7 +12,12 @@ const router: Router = Router();
 router.get(
   '/posts/',
   async (req: Request, res: Response, next: NextFunction) => {
-    const posts = await getRepository(Post).find();
+    const posts = await getRepository(Post)
+      .find()
+      .catch((e: Error) => next(e));
+    if (!posts) {
+      next();
+    }
     res.json({ posts });
   }
 );
@@ -23,7 +28,12 @@ router.get(
   async (req: Request, res: Response, next: NextFunction) => {
     const postId = req.params.postId;
     const postRepo = getConnection().getRepository(Post);
-    const post = await postRepo.findOne(postId, {});
+    const post = await postRepo
+      .findOne(postId, {})
+      .catch((e: Error) => next(e));
+    if (!post) {
+      next();
+    }
     res.json({ post });
   }
 );
@@ -37,7 +47,7 @@ router.post(
     const postRepo = getConnection().getRepository(Post);
 
     // TODO: change next lines to actual logged in user
-    const users = await getRepository(User).find() as User[];
+    const users = (await getRepository(User).find()) as User[];
 
     // assign values
     const newPost = postRepo.create({
@@ -67,7 +77,9 @@ router.put(
     const postRepo = getConnection().getRepository(Comment);
     const postBody = req.body.post;
 
-    const post = await postRepo.update({ id: postId }, postBody);
+    const post = await postRepo
+      .update({ id: postId }, postBody)
+      .catch((e: Error) => next(e));
 
     return res.json({ post });
   }
@@ -81,11 +93,15 @@ router.delete(
     const postRepo = getConnection().getRepository(Post);
 
     // nullify publish date
-    await postRepo.update({ id: postId }, {
-      publishedDate: undefined
-    });
-    const posts = await postRepo.find({});
-    return res.json({ posts });
+    await postRepo
+      .update({ id: postId }, { publishedDate: undefined })
+      .catch((e: Error) => next(e));
+
+    const posts = await postRepo.find({}).catch((e: Error) => next(e));
+    if (!posts) {
+      next();
+    }
+    res.json({ posts });
   }
 );
 
