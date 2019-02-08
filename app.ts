@@ -9,10 +9,11 @@ import { indexRoutes } from './controllers';
 import { commentsRoutes } from './controllers/comment';
 import { postsRoutes } from './controllers/post';
 import http from 'http';
-import errorhandler from 'api-error-handler';
 
 createConnection().then(async connection => {
   const app = express();
+
+  const isProduction = process.env.NODE_ENV === 'production';
 
   // middleware
   app.use(cors({ credentials: true, origin: true }));
@@ -33,8 +34,24 @@ createConnection().then(async connection => {
     next(err);
   });
 
-  // send json error handler
-  app.use(errorhandler());
+  // development error handler
+  if (!isProduction) {
+    app.use((errors: any, req: Request, res: Response, next: NextFunction) => {
+      res.status(errors.status || 500);
+      res.json({ errors });
+    });
+  }
+
+  // production error handler
+  app.use((errors: any, req: Request, res: Response, next: NextFunction) => {
+    res.status(errors.status || 500);
+    res.json({
+      errors: {
+        message: errors.message,
+        error: {}
+      }
+    });
+  });
 
   // port
   const port = process.env.PORT || '3000';
