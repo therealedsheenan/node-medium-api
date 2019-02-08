@@ -2,7 +2,6 @@ import { Router, Request, Response, NextFunction } from 'express';
 import { getConnection, getRepository } from 'typeorm';
 import { validate } from 'class-validator';
 
-import { Comment } from '../entities/comment';
 import { Post } from '../entities/post';
 import { User } from '../entities/user';
 
@@ -13,7 +12,9 @@ router.get(
   '/posts/',
   async (req: Request, res: Response, next: NextFunction) => {
     const posts = await getRepository(Post)
-      .find()
+      .find({
+        order: { updateDate: 'ASC' }
+      })
       .catch((e: Error) => next(e));
     if (!posts) {
       next();
@@ -74,18 +75,22 @@ router.put(
   '/post/:postId',
   async (req: Request, res: Response, next: NextFunction) => {
     const postId = req.params.postId;
-    const postRepo = getConnection().getRepository(Comment);
     const postBody = req.body.post;
+    const postRepo = getConnection().getRepository(Post);
 
-    const post = await postRepo
-      .update({ id: postId }, postBody)
+    // update post and return updated entity
+    await postRepo
+      .update({ id: postId }, { ...postBody, updateDate: new Date() })
+      .then(async () =>
+        res.json({
+          post: await postRepo.findOne(postId).catch((e: Error) => next(e))
+        })
+      )
       .catch((e: Error) => next(e));
-
-    return res.json({ post });
   }
 );
 
-// Delete comment via :commentID
+// Delete post via :postID
 router.delete(
   '/post/:postId',
   async (req: Request, res: Response, next: NextFunction) => {
@@ -98,9 +103,11 @@ router.delete(
       .catch((e: Error) => next(e));
 
     const posts = await postRepo.find({}).catch((e: Error) => next(e));
+
     if (!posts) {
       next();
     }
+
     res.json({ posts });
   }
 );
