@@ -35,6 +35,8 @@
     "faker": "^4.1.0",
     "morgan": "^1.9.1",
     "nodemon": "^1.18.9",
+    "passport": "^0.4.0",
+    "passport-local": "^1.0.0",
     "pg": "^7.8.0",
     "reflect-metadata": "^0.1.13",
     "ts-node": "^7.0.1",
