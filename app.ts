@@ -9,7 +9,11 @@ import { indexRoutes } from './controllers';
 import { commentsRoutes } from './controllers/comment';
 import { postsRoutes } from './controllers/post';
 import { usersRoutes } from './controllers/user';
+import { localStrategy } from './services/passport';
 import http from 'http';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 createConnection().then(async connection => {
   const app = express();
@@ -22,6 +26,9 @@ createConnection().then(async connection => {
   app.use(bodyParser.json());
   app.use(bodyParser.urlencoded({ extended: false }));
   app.use(express.static(path.join(__dirname, 'public')));
+
+  // passport strategy
+  localStrategy();
 
   // routes
   app.use('/', indexRoutes);
