@@ -3,7 +3,7 @@ import jwt from 'express-jwt';
 // getting Token or Bearer
 const getTokenFromHeader = (req: any) => {
   if (
-    (req.headers['authorization'] &&
+    (req.headers.authorization &&
       req.headers.authorization.split(' ')[0] === 'Token') ||
     (req.headers.authorization &&
       req.headers.authorization.split(' ')[0] === 'Bearer')
@@ -14,21 +14,19 @@ const getTokenFromHeader = (req: any) => {
   return null;
 };
 
-const secret = process.env.SECRET || 'secret';
+export const secret = process.env.SECRET || 'secret';
 
 // authentication middleware
-const auth = {
+export const auth = {
   required: jwt({
     secret: secret,
-    userProperty: 'payload',
+    userProperty: 'currentUser',
     getToken: getTokenFromHeader
   }),
   optional: jwt({
     secret: secret,
-    userProperty: 'payload',
+    userProperty: 'currentUser',
     credentialsRequired: false,
     getToken: getTokenFromHeader
   })
 };
-
-export default auth;

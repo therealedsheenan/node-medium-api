@@ -1,9 +1,10 @@
 import { Router, Request, Response, NextFunction } from 'express';
-import { getConnection, getRepository } from 'typeorm';
+import { getConnection } from 'typeorm';
 import { validate } from 'class-validator';
 
 import { Post } from '../entities/post';
 import { User } from '../entities/user';
+import { auth } from '../middlewares/auth';
 
 const router: Router = Router();
 
@@ -37,21 +38,28 @@ router.get(
 // Create new post
 router.post(
   '/post/new',
-  async (req: Request, res: Response, next: NextFunction) => {
+  auth.required,
+  async (req: any, res: Response, next: NextFunction) => {
     // comments data
     const postBody = req.body.post;
     const postRepo = getConnection().getRepository(Post);
 
-    // TODO: change next lines to actual logged in user
-    const users = (await getRepository(User).find()) as User[];
+    // get current logged in user
+    const currentUser = await User.findById(req.currentUser.id).catch(
+      (e: Error) => next(e)
+    );
+
+    if (!currentUser) {
+      next('Something went wrong.');
+    }
 
     // assign values
     const newPost = postRepo.create({
       ...postBody,
       createDate: new Date(),
       updateDate: new Date(),
-      user: users[0] // TODO: change next lines to actual logged in user
-    });
+      author: currentUser
+    } as Object);
 
     // run post validations
     const postErrors = await validate(newPost);
