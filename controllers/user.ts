@@ -1,9 +1,9 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import { getConnection } from 'typeorm';
-// import { validate } from 'class-validator';
+import passport from 'passport';
+import { validate } from 'class-validator';
 
 import { User } from '../entities/user';
-import { validate } from 'class-validator';
 
 const router: Router = Router();
 
@@ -32,6 +32,29 @@ router.post(
         res.json({ user: User.toAuthJSON(user) });
       }
     }
+  }
+);
+
+router.post(
+  '/user/login',
+  async (req: Request, res: Response, next: NextFunction) => {
+    // passport strategy
+    passport.authenticate('local', { session: false }, (
+      err,
+      user,
+      info
+    ) => {
+      if (err) {
+        return next(err);
+      }
+
+      if (user) {
+        res.json({ user: User.toAuthJSON(user) });
+      } else {
+        res.status(422).json(info);
+      }
+
+    })(req, res, next);
   }
 );
 
