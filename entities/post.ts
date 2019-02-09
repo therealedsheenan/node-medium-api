@@ -54,4 +54,12 @@ export class Post extends BaseEntity {
       .orderBy('post.updateDate', 'ASC')
       .getMany();
   }
+
+  static getPostComments (id: number) {
+    return this.createQueryBuilder('post')
+      .where('user.id = :id', { id })
+      .innerJoinAndSelect('post.comments', 'comments')
+      .orderBy('post.updateDate', 'ASC')
+      .getMany();
+  }
 }

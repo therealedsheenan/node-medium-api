@@ -76,6 +76,7 @@ router.post(
 // Update post via :postId
 router.put(
   '/post/:postId',
+  auth.required,
   async (req: Request, res: Response, next: NextFunction) => {
     const postId = req.params.postId;
     const postBody = req.body.post;

@@ -12,7 +12,7 @@ router.get(
   '/post/:postId/comments/',
   async (req: Request, res: Response, next: NextFunction) => {
     const postId = req.params.postId;
-    const comments = await getPost(postId);
+    const comments = await Post.getPostComments(postId);
 
     if (!comments) {
       next();
@@ -67,7 +67,9 @@ router.post(
       await commentRepo.save(newComment).catch((e: Error) => next(e));
 
       // get post's comments
-      const comments = await getPost(postId).catch((e: Error) => next(e));
+      const comments = await Post.getPostComments(postId).catch((e: Error) =>
+        next(e)
+      );
       res.json({ comments });
     }
   }
@@ -109,17 +111,5 @@ router.delete(
     res.json({ comments });
   }
 );
-
-// Utility function to get post
-export const getPost = async (postId: number) => {
-  const postRepo = getConnection().getRepository(Post);
-
-  return postRepo
-    .findOne(postId, {
-      relations: ['comments'],
-      order: { createDate: 'ASC' }
-    })
-    .catch((e: Error) => new Error('Cannot find.'));
-};
 
 export const commentsRoutes: Router = router;
