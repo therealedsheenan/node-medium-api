@@ -6,10 +6,11 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc",
+    "server:prod": "tsc-watch --onSuccess 'nodemon ./build/app.js'",
     "schema:sync": "typeorm schema:sync",
     "schema:drop": "typeorm schema:drop",
     "seed": "ts-node seed.ts",
-    "server": "tsc-watch --onSuccess 'nodemon ./build/app.js'"
+    "server": "ts-node app.ts"
   },
   "repository": {
     "type": "git",

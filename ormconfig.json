@@ -5,10 +5,14 @@
   "username": "root",
   "password": "root",
   "database": "node-medium-api",
-  "entities": ["build/entities/**{.ts,.js}"],
-  "migrations": ["build/migrations/**{.ts,.js}"],
+  "entities": ["entities/**{.ts,.js}"],
+  "migrations": ["migrations/**{.ts,.js}"],
+  "subscribers": ["subscribers/**/*{.ts,.js}"],
   "autoSchemaSync": true,
+  "logging": true,
   "cli": {
-    "migrationsDir": "migrations"
+    "entitiesDir": "entities",
+    "migrationsDir": "migrations",
+    "subscribersDir": "subscribers"
   }
 }
