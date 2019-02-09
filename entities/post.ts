@@ -30,12 +30,10 @@ export class Post extends BaseEntity {
   createDate: Date;
 
   @Column('date', { default: undefined, nullable: true })
-  @IsDate()
   updateDate: Date;
 
   @Column('date', { default: undefined, nullable: true })
-  @IsDate()
-  publishedDate: Date;
+  publishedDate: Date | undefined;
 
   @OneToMany(type => Comment, comment => comment.post, {
     cascade: true
@@ -53,9 +51,7 @@ export class Post extends BaseEntity {
 
   static getAll () {
     return this.createQueryBuilder('post')
-      .orderBy({
-        updateDate: 'ASC'
-      })
+      .orderBy('post.updateDate', 'ASC')
       .getMany();
   }
 }

@@ -17,9 +17,9 @@ import jwt from 'jsonwebtoken';
 
 import { Post } from './post';
 import { UserProfile } from './userProfile';
+import { secret } from '../middlewares/auth';
 
 const queryString = 'user';
-const secret = process.env.SECRET || 'tnisisasecretdonttellanyone';
 
 @Entity()
 @Unique(['email'])
@@ -54,19 +54,19 @@ export class User extends BaseEntity {
   userProfile: UserProfile;
 
   /*
-  * Don't store the real password to the database
-  * All password should be blank and authentication of password
-  * should only be based on the user's salt and hash values
-  */
+   * Don't store the real password to the database
+   * All password should be blank and authentication of password
+   * should only be based on the user's salt and hash values
+   */
   @BeforeInsert()
   clearPassword () {
     this.password = '';
   }
 
   /*
-  * After the creation of User, call createUserLink()
-  * from UserProfile to save relationship
-  */
+   * After the creation of User, call createUserLink()
+   * from UserProfile to save relationship
+   */
   @AfterInsert()
   createUserProfile () {
     UserProfile.initUserProfile(this);
@@ -74,11 +74,11 @@ export class User extends BaseEntity {
 
   // This function saves one-to-one relationship of User and UserProfile
   static async linkUserProfile (userProfile: UserProfile) {
-    const user = await this.findById(userProfile.user.id) as User;
+    const user = (await this.findById(userProfile.user.id)) as User;
     await this.getRepository().update(user.id, {
       userProfile
     });
-  };
+  }
 
   static findById (id: string | number) {
     return this.createQueryBuilder(queryString)
