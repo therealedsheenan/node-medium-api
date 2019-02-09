@@ -11,7 +11,7 @@
     "schema:drop": "./node_modules/.bin/ts-node ./node_modules/.bin/typeorm schema:drop",
     "schema:run-migrations": "./node_modules/.bin/ts-node ./node_modules/.bin/typeorm migration:run",
     "seed": "ts-node seed.ts",
-    "server": "ts-node app.ts"
+    "dev": "./node_modules/.bin/nodemon"
   },
   "repository": {
     "type": "git",

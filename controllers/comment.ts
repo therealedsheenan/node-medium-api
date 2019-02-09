@@ -12,12 +12,7 @@ router.get(
   '/post/:postId/comments/',
   async (req: Request, res: Response, next: NextFunction) => {
     const postId = req.params.postId;
-    const postRepo = getConnection().getRepository(Post);
-    const comments = await postRepo
-      .findOne(postId, {
-        relations: ['comments']
-      })
-      .catch((e: Error) => next(e));
+    const comments = await getPost(postId);
 
     if (!comments) {
       next();
@@ -29,11 +24,12 @@ router.get(
 
 // Get comment via :commentID
 router.get(
-  '/comments/:commentId',
-  (req: Request, res: Response, next: NextFunction) => {
+  '/comment/:commentId',
+  async (req: Request, res: Response, next: NextFunction) => {
     const commentId = req.params.commentId;
     const commentRepo = getConnection().getRepository(Comment);
-    const comment = commentRepo
+
+    const comment = await commentRepo
       .findOne(commentId, {})
       .catch((e: Error) => next(e));
 
@@ -47,67 +43,46 @@ router.get(
 
 // Create new comment
 router.post(
-  '/post/:postId/comments/new',
+  '/post/:postId/comment/new',
   async (req: Request, res: Response, next: NextFunction) => {
+    const postId = req.params.postId;
     // comments data
     const commentBody = req.body.comment;
     const commentRepo = getConnection().getRepository(Comment);
 
     // assign values
-    // @ts-ignore
-    const newComment = new Comment({
+    const newComment = commentRepo.create({
       ...commentBody,
       approvedComment: false,
-      createDate: Date.now()
-    }) as Comment;
+      createDate: new Date(),
+      post: postId
+    });
 
     // run comment validations
     const commentErrors = await validate(newComment);
 
     if (commentErrors.length > 0) {
-      throw new Error('Comments: Validation failed.');
+      next(commentErrors);
     } else {
-      const comment = (await commentRepo
-        .save(newComment)
-        .catch((e: Error) => next(e))) as Comment;
+      await commentRepo.save(newComment).catch((e: Error) => next(e));
 
-      // post data
-      const postId = req.body.postId;
-      const postRepo = getConnection().getRepository(Post);
-
-      const post = (await postRepo
-        .findOne(postId, {})
-        .catch((e: Error) => next(e))) as Post;
-
-      if (!post) {
-        next();
-      }
-
-      // add comments to post
-      post.comments.push(comment);
-
-      // save post
-      const updatedPost = await postRepo
-        .save(post)
-        .catch((e: Error) => next(e));
-
-      res.json({
-        post: updatedPost
-      });
+      // get post's comments
+      const comments = await getPost(postId);
+      res.json({ comments });
     }
   }
 );
 
 // Update comment via :commentID
 router.put(
-  '/comments/:commentId',
+  '/comment/:commentId',
   async (req: Request, res: Response, next: NextFunction) => {
     const commentId = req.params.commentId;
     const commentRepo = getConnection().getRepository(Comment);
     const commentBody = req.body.comment;
 
     const comment = await commentRepo
-      .update({ id: commentId }, commentBody)
+      .update({ id: commentId }, { ...commentBody, updateDate: new Date() })
       .catch((e: Error) => next(e));
 
     if (!comment) {
@@ -120,7 +95,7 @@ router.put(
 
 // Delete comment via :commentID
 router.delete(
-  '/comments/:commentId',
+  '/comment/:commentId',
   async (req: Request, res: Response, next: NextFunction) => {
     const commentId = req.params.commentId;
     const commentRepo = getConnection().getRepository(Comment);
@@ -134,5 +109,17 @@ router.delete(
     res.json({ comments });
   }
 );
+
+// Utility function to get post
+export const getPost = async (postId: number) => {
+  const postRepo = getConnection().getRepository(Post);
+
+  return postRepo
+    .findOne(postId, {
+      relations: ['comments'],
+      order: { createDate: 'ASC' }
+    })
+    .catch((e: Error) => new Error('Cannot find.'));
+};
 
 export const commentsRoutes: Router = router;

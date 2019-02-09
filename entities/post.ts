@@ -45,4 +45,17 @@ export class Post extends BaseEntity {
   @ManyToOne(type => User, author => author.posts, { nullable: false })
   author: User;
 
+  static getById (id: string | number) {
+    return this.createQueryBuilder('post')
+      .where('post.id = :id', { id })
+      .getOne();
+  }
+
+  static getAll () {
+    return this.createQueryBuilder('post')
+      .orderBy({
+        updateDate: 'ASC'
+      })
+      .getMany();
+  }
 }

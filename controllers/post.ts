@@ -11,11 +11,8 @@ const router: Router = Router();
 router.get(
   '/posts/',
   async (req: Request, res: Response, next: NextFunction) => {
-    const posts = await getRepository(Post)
-      .find({
-        order: { updateDate: 'ASC' }
-      })
-      .catch((e: Error) => next(e));
+    const posts = await Post.getAll().catch((e: Error) => next(e));
+
     if (!posts) {
       next();
     }
@@ -28,10 +25,8 @@ router.get(
   '/post/:postId',
   async (req: Request, res: Response, next: NextFunction) => {
     const postId = req.params.postId;
-    const postRepo = getConnection().getRepository(Post);
-    const post = await postRepo
-      .findOne(postId, {})
-      .catch((e: Error) => next(e));
+    const post = await Post.getById(postId).catch((e: Error) => next(e));
+
     if (!post) {
       next();
     }
@@ -61,11 +56,11 @@ router.post(
     // run post validations
     const postErrors = await validate(newPost);
 
-    if (!postErrors) {
-      const post = await postRepo.save(newPost);
-      res.json({ post: post });
-    } else {
+    if (postErrors.length > 0) {
       next(postErrors);
+    } else {
+      const post = await postRepo.save(newPost);
+      res.json({ post });
     }
   }
 );
