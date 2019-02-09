@@ -8,6 +8,7 @@ import cors from 'cors';
 import { indexRoutes } from './controllers';
 import { commentsRoutes } from './controllers/comment';
 import { postsRoutes } from './controllers/post';
+import { usersRoutes } from './controllers/user';
 import http from 'http';
 
 createConnection().then(async connection => {
@@ -26,6 +27,7 @@ createConnection().then(async connection => {
   app.use('/', indexRoutes);
   app.use(postsRoutes);
   app.use(commentsRoutes);
+  app.use(usersRoutes);
 
   // error handlers
   app.use((req: Request, res: Response, next: NextFunction) => {
