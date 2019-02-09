@@ -67,7 +67,7 @@ router.post(
       await commentRepo.save(newComment).catch((e: Error) => next(e));
 
       // get post's comments
-      const comments = await getPost(postId);
+      const comments = await getPost(postId).catch((e: Error) => next(e));
       res.json({ comments });
     }
   }
