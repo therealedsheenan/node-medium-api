@@ -1,5 +1,12 @@
 {
-  "watch": ["**/*.ts"],
+  "watch": [
+    "app.ts",
+    "controllers/**/*.ts",
+    "entities/**/*.ts",
+    "services/**/*.ts",
+    "subscribers/**/*.ts",
+    "middlewares/**/*.ts"
+  ],
   "ext": "ts",
   "ignore": ["src/**/*.spec.ts"],
   "exec": "ts-node ./app.ts"
