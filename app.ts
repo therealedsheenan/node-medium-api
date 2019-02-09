@@ -61,5 +61,14 @@ createConnection().then(async connection => {
 
   server.listen(port);
   server.on('error', (e: object) => console.error(e));
-  server.on('listen', content => console.log(content));
+
+  server.on('listening', () => {
+    console.log(
+      '  App is running at http://localhost:%d in %s mode',
+      port,
+      isProduction ? 'production' : 'development'
+    );
+    console.log('  Press CTRL-C to stop\n');
+  });
+
 });
