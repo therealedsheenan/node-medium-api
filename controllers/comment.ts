@@ -3,16 +3,22 @@ import { getConnection } from 'typeorm';
 import { validate } from 'class-validator';
 
 import { Comment } from '../entities/comment';
-import { Post } from '../entities/post';
+
+import { auth } from '../middlewares/auth';
 
 const router: Router = Router();
 
-// Get all comments from a specific postID
+/*
+ * Get all comments from a specific postID
+ * can pass ?approved=true|false
+ */
 router.get(
   '/post/:postId/comments/',
   async (req: Request, res: Response, next: NextFunction) => {
     const postId = req.params.postId;
-    const comments = await Post.getPostComments(postId);
+    const comments = await Comment.getPostCommentsQuery(postId, true).catch(
+      (e: Error) => next(e)
+    );
 
     if (!comments) {
       next();
@@ -66,9 +72,9 @@ router.post(
     } else {
       await commentRepo.save(newComment).catch((e: Error) => next(e));
 
-      // get post's comments
-      const comments = await Post.getPostComments(postId).catch((e: Error) =>
-        next(e)
+      // get unapproved comments
+      const comments = await Comment.getPostCommentsQuery(postId, false).catch(
+        (e: Error) => next(e)
       );
       res.json({ comments });
     }
@@ -77,21 +83,34 @@ router.post(
 
 // Update comment via :commentID
 router.put(
-  '/comment/:commentId',
-  async (req: Request, res: Response, next: NextFunction) => {
+  '/comment/:commentId/approve',
+  auth.required,
+  async (req: any, res: Response, next: NextFunction) => {
     const commentId = req.params.commentId;
     const commentRepo = getConnection().getRepository(Comment);
-    const commentBody = req.body.comment;
+    const currentUser = req.currentUser;
 
-    const comment = await commentRepo
-      .update({ id: commentId }, { ...commentBody, updateDate: new Date() })
+    // validated ownership
+    await commentRepo
+      .findOne(commentId, {
+        relations: ['post', 'post.author']
+      })
+      .then(async (comment: Comment) => {
+        // allow user to edit comment if the user is the owner
+        if (comment.post.author.id === currentUser.id) {
+          await commentRepo
+            .update({ id: commentId }, { approvedComment: true })
+            .then(async () => {
+              res.json({
+                post: await commentRepo
+                  .findOne(commentId)
+                  .catch((e: Error) => next(e))
+              });
+            })
+            .catch((e: Error) => next(e));
+        }
+      })
       .catch((e: Error) => next(e));
-
-    if (!comment) {
-      next();
-    }
-
-    res.json({ comment });
   }
 );
 

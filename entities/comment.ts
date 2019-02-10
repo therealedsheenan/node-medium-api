@@ -4,13 +4,14 @@ import {
   Column,
   PrimaryGeneratedColumn,
   ManyToOne,
-  JoinTable
+  JoinTable,
+  BaseEntity
 } from 'typeorm';
 import { Length, IsDate } from 'class-validator';
 import { Post } from './post';
 
 @Entity()
-export class Comment {
+export class Comment extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -34,4 +35,12 @@ export class Comment {
   })
   @JoinTable()
   post: Post;
+
+  static getPostCommentsQuery (postId: number, approved: boolean) {
+    return this.createQueryBuilder('comment')
+      .where('comment.post.id = :postId', { postId })
+      .andWhere('comment.approvedComment = :approved', { approved })
+      .orderBy('comment.createDate', 'ASC')
+      .getMany();
+  }
 }
