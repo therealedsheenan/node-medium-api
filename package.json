@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc",
-    "server:prod": "tsc-watch --onSuccess 'nodemon ./build/app.js'",
+    "server:prod": "tsc --onSuccess 'nodemon ./build/app.js'",
     "schema:sync": "./node_modules/.bin/ts-node ./node_modules/.bin/typeorm schema:sync",
     "schema:drop": "./node_modules/.bin/ts-node ./node_modules/.bin/typeorm schema:drop",
     "schema:run-migrations": "./node_modules/.bin/ts-node ./node_modules/.bin/typeorm migration:run",

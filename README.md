@@ -18,18 +18,31 @@ $ npm run server # yarn server
 ```
 
 ### Migrations
+Executing migration files
 ```
-$ typeorm migration:run
+$ npm run schema:run-migrations # yarn schema:run-migrations
+```
+
+Synching schema
+```
+$ npm run schema:sync # yarn schema:sync
+```
+
+Dropping schema
+```
+$ npm run schema:drop # yarn schema:drop
 ```
 
 ### Run seed file
 ```
-$ npm run seed
+$ npm run seed # yarn seed
 ```
+
+#### Environment variables
+Rename `.env.sample` to `.env`
 
 #### More information
 Know more about typeorm here: http://typeorm.io
 
-
-##### Author
+#### Author
 Sheenan Tenepre

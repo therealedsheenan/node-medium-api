@@ -32,5 +32,8 @@
   "include": [
     "*.ts",
     "node_modules/@types"
+  ],
+  "exclude": [
+    "seed.ts"
   ]
 }
