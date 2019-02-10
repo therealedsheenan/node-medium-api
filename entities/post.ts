@@ -49,16 +49,13 @@ export class Post extends BaseEntity {
       .getOne();
   }
 
-  static getAll () {
+  /*
+  * Change published date condition according to condition params
+  * Post draft and published posts only
+  */
+  static getAllCondition (condition: string) {
     return this.createQueryBuilder('post')
-      .orderBy('post.updateDate', 'ASC')
-      .getMany();
-  }
-
-  static getPostComments (id: number) {
-    return this.createQueryBuilder('post')
-      .where('user.id = :id', { id })
-      .innerJoinAndSelect('post.comments', 'comments')
+      .where(`post.publishedDate ${condition}`)
       .orderBy('post.updateDate', 'ASC')
       .getMany();
   }

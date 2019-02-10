@@ -12,7 +12,24 @@ const router: Router = Router();
 router.get(
   '/posts/',
   async (req: Request, res: Response, next: NextFunction) => {
-    const posts = await Post.getAll().catch((e: Error) => next(e));
+    const posts = await Post.getAllCondition('IS NOT NULL').catch((e: Error) =>
+      next(e)
+    );
+
+    if (!posts) {
+      next();
+    }
+    res.json({ posts });
+  }
+);
+
+// Get all draft posts
+router.get(
+  '/posts/draft',
+  async (req: Request, res: Response, next: NextFunction) => {
+    const posts = await Post.getAllCondition('IS NULL').catch((e: Error) =>
+      next(e)
+    );
 
     if (!posts) {
       next();
