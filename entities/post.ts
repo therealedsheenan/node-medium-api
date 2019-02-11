@@ -11,6 +11,7 @@ import { Length, IsDate } from 'class-validator';
 
 import { User } from './user';
 import { Comment } from './comment';
+import { Clap } from './clap';
 
 @Entity()
 export class Post extends BaseEntity {
@@ -39,6 +40,11 @@ export class Post extends BaseEntity {
     cascade: true
   })
   comments: Comment[];
+
+  @OneToMany(type => Clap, clap => clap.post, {
+    cascade: true
+  })
+  claps: Clap[];
 
   @ManyToOne(type => User, author => author.posts, { nullable: false })
   author: User;
