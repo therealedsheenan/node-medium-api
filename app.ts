@@ -9,6 +9,7 @@ import { indexRoutes } from './controllers';
 import { commentsRoutes } from './controllers/comment';
 import { postsRoutes } from './controllers/post';
 import { usersRoutes } from './controllers/user';
+import { clapsRoutes } from './controllers/clap';
 import { localStrategy } from './services/passport';
 import http from 'http';
 import dotenv from 'dotenv';
@@ -35,6 +36,7 @@ createConnection().then(async connection => {
   app.use(postsRoutes);
   app.use(commentsRoutes);
   app.use(usersRoutes);
+  app.use(clapsRoutes);
 
   // error handlers
   app.use((req: Request, res: Response, next: NextFunction) => {
