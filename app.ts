@@ -32,7 +32,7 @@ createConnection().then(async connection => {
   localStrategy();
 
   // routes
-  app.use('/', indexRoutes);
+  app.use(indexRoutes);
   app.use(postsRoutes);
   app.use(commentsRoutes);
   app.use(usersRoutes);
