@@ -10,6 +10,7 @@
   "subscribers": ["subscribers/**/*{.ts,.js}"],
   "autoSchemaSync": true,
   "logging": true,
+  "synchronize": false,
   "cli": {
     "entitiesDir": "entities",
     "migrationsDir": "migrations",

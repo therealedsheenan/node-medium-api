@@ -23,43 +23,52 @@ createConnection(options).then(async connection => {
   const postRepo = connection.getRepository(Post);
   const userRepo = connection.getRepository(User);
 
-  // seed user
-  const newUser = await userRepo.create({
-    firstName: faker.name.firstName(),
-    lastName: faker.name.lastName()
-  });
+  try {
 
-  const user = await userRepo.save(newUser) as User;
+    const passwordSaltHash = await User.getPasswordSaltHash(faker.internet.password());
 
-  // seed posts
-  await Promise.all([...Array(10)].map(async num => {
-    const newPost = await postRepo.create({
-      title: faker.random.words(4),
-      text: faker.lorem.paragraph(),
-      createDate: new Date(),
-      author: user
+    // seed user
+    const newUser = await userRepo.create({
+      email: faker.internet.email(),
+      ...passwordSaltHash
     });
 
-    await postRepo.save(newPost);
-  }));
+    const user = (await userRepo.save(newUser)) as User;
 
-  const posts = await postRepo.find() as Post[];
+    // seed posts
+    await Promise.all(
+      [...Array(10)].map(async num => {
+        const newPost = await postRepo.create({
+          title: faker.random.words(4),
+          text: faker.lorem.paragraph(),
+          createDate: new Date(),
+          author: user
+        });
+
+        await postRepo.save(newPost);
+      })
+    );
+
+    const posts = (await postRepo.find()) as Post[];
 
     // creating comments
-  await Promise.all(
-    [...Array(10).keys()].map(async (num: number) => {
-      const comment = await commentRepo.create();
-      comment.author = faker.name.findName();
-      comment.text = faker.lorem.paragraph();
-      comment.approvedComment = false;
-      comment.createDate = new Date();
-      comment.post = posts[0];
+    await Promise.all(
+      [...Array(10).keys()].map(async (num: number) => {
+        const comment = await commentRepo.create();
+        comment.author = faker.name.findName();
+        comment.text = faker.lorem.paragraph();
+        comment.approvedComment = false;
+        comment.createDate = new Date();
+        comment.post = posts[0];
+        await commentRepo.save(comment);
+      })
+    );
 
-      await commentRepo.save(comment);
-    })
-  );
+    // kill connection
+    console.log('Seeding successful...');
+  } catch (e) {
+    console.error(e);
+  }
 
-  // kill connection
-  console.log('Seeding successful...');
   await connection.close();
 });
