@@ -52,6 +52,14 @@ export class Post extends BaseEntity {
   static getById (id: string | number) {
     return this.createQueryBuilder('post')
       .where('post.id = :id', { id })
+      .innerJoinAndSelect('post.author', 'author')
+      .innerJoinAndSelect('author.userProfile', 'userProfile')
+      .select([
+        'post',
+        'author.id',
+        'author.email',
+        'userProfile'
+      ])
       .getOne();
   }
 
