@@ -40,7 +40,7 @@ createConnection(options).then(async connection => {
       [...Array(10)].map(async num => {
         const newPost = await postRepo.create({
           title: faker.random.words(4),
-          text: faker.lorem.paragraph(),
+          text: faker.lorem.paragraphs(20),
           createDate: new Date(),
           author: user
         });
