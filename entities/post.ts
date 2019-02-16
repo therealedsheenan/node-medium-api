@@ -70,6 +70,14 @@ export class Post extends BaseEntity {
   static getAllCondition (condition: string) {
     return this.createQueryBuilder('post')
       .where(`post.publishedDate ${condition}`)
+      .innerJoinAndSelect('post.author', 'author')
+      .innerJoinAndSelect('author.userProfile', 'userProfile')
+      .select([
+        'post',
+        'author.id',
+        'author.email',
+        'userProfile'
+      ])
       .orderBy('post.updateDate', 'ASC')
       .getMany();
   }
