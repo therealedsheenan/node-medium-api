@@ -13,10 +13,11 @@ router.get(
     const claps = await Clap.getClapsCount(postId).catch((e: Error) => next(e));
 
     if (!claps) {
-      next();
+      // return 0 if claps there's no claps existing on a post
+      res.json({ claps: 0 });
+    } else {
+      res.json({ claps });
     }
-
-    res.json({ claps });
   }
 );
 
