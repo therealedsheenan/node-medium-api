@@ -128,6 +128,7 @@ export class User extends BaseEntity {
 
   static toAuthJSON (user: User) {
     return {
+      id: user.id,
       email: user.email,
       token: this.generateToken(user)
     };
