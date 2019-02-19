@@ -12,7 +12,7 @@ const router: Router = Router();
 router.get(
   '/posts/',
   async (req: Request, res: Response, next: NextFunction) => {
-    const posts = await Post.getAllCondition('IS NOT NULL').catch((e: Error) =>
+    const posts = await Post.getAllPublishedPosts().catch((e: Error) =>
       next(e)
     );
 
@@ -26,8 +26,10 @@ router.get(
 // Get all draft posts
 router.get(
   '/posts/draft',
-  async (req: Request, res: Response, next: NextFunction) => {
-    const posts = await Post.getAllCondition('IS NULL').catch((e: Error) =>
+  auth.required,
+  async (req: any, res: Response, next: NextFunction) => {
+    const currentUserId = req.currentUser.id;
+    const posts = await Post.getAllDraftPosts(currentUserId).catch((e: Error) =>
       next(e)
     );
 
@@ -44,7 +46,7 @@ router.get(
   auth.optional,
   async (req: any, res: Response, next: NextFunction) => {
     const postId = req.params.postId;
-    const currentUserId = req.currentUser.id;
+    const currentUserId = req.currentUser && req.currentUser.id;
     const post = (await Post.getById(postId).catch((e: Error) =>
       next(e)
     )) as Post;
