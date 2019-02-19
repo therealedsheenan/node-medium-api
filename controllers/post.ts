@@ -41,14 +41,23 @@ router.get(
 // Get post via :postID
 router.get(
   '/post/:postId',
-  async (req: Request, res: Response, next: NextFunction) => {
+  auth.optional,
+  async (req: any, res: Response, next: NextFunction) => {
     const postId = req.params.postId;
-    const post = await Post.getById(postId).catch((e: Error) => next(e));
+    const currentUserId = req.currentUser.id;
+    const post = (await Post.getById(postId).catch((e: Error) =>
+      next(e)
+    )) as Post;
 
     if (!post) {
       next();
     }
-    res.json({ post });
+    res.json({
+      post: {
+        ...post,
+        isAuthor: currentUserId === post.author.id
+      }
+    });
   }
 );
 
