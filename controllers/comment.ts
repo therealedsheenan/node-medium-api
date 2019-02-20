@@ -108,6 +108,7 @@ router.put(
   auth.required,
   async (req: any, res: Response, next: NextFunction) => {
     const commentId = req.params.commentId;
+    const commentApprove = req.body.comment && req.body.comment.approvedComment;
     const commentRepo = getConnection().getRepository(Comment);
     const currentUser = req.currentUser;
 
@@ -120,7 +121,7 @@ router.put(
         // allow user to edit comment if the user is the owner
         if (comment.post.author.id === currentUser.id) {
           await commentRepo
-            .update({ id: commentId }, { approvedComment: true })
+            .update({ id: commentId }, { approvedComment: commentApprove })
             .then(async () => {
               res.json({
                 post: await commentRepo
