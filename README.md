@@ -38,6 +38,8 @@ $ npm run schema:drop # yarn schema:drop
 $ npm run seed # yarn seed
 ```
 
+By default, posts are not `published`, login the account from the `seed.ts` file and `publish` to see posts from the home page.
+
 #### Environment variables
 Rename `.env.sample` to `.env`
 
