@@ -21,11 +21,11 @@ export class Post extends BaseEntity {
   id: number;
 
   @Column()
-  @Length(6, 20)
+  @Length(4, 80)
   title: string;
 
   @Column()
-  @Length(4, 200)
+  @Length(4, 1000)
   text: string;
 
   @Column('date')
