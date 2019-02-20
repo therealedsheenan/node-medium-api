@@ -36,10 +36,17 @@ export class Comment extends BaseEntity {
   @JoinTable()
   post: Post;
 
-  static getPostCommentsQuery (postId: number, approved: boolean) {
+  static getApprovedPostComments (postId: number) {
     return this.createQueryBuilder('comment')
       .where('comment.post.id = :postId', { postId })
-      .andWhere('comment.approvedComment = :approved', { approved })
+      .andWhere('comment.approvedComment = :approved', { approved: true })
+      .orderBy('comment.createDate', 'ASC')
+      .getMany();
+  }
+
+  static getAllPostComments (postId: number) {
+    return this.createQueryBuilder('comment')
+      .where('comment.post.id = :postId', { postId })
       .orderBy('comment.createDate', 'ASC')
       .getMany();
   }

@@ -5,6 +5,7 @@ import { validate } from 'class-validator';
 import { Comment } from '../entities/comment';
 
 import { auth } from '../middlewares/auth';
+import { Post } from '../entities/post';
 
 const router: Router = Router();
 
@@ -14,11 +15,31 @@ const router: Router = Router();
  */
 router.get(
   '/post/:postId/comments/',
-  async (req: Request, res: Response, next: NextFunction) => {
+  auth.optional,
+  async (req: any, res: Response, next: NextFunction) => {
     const postId = req.params.postId;
-    const comments = await Comment.getPostCommentsQuery(postId, true).catch(
-      (e: Error) => next(e)
-    );
+    const post = (await Post.getById(postId).catch((e: Error) =>
+      next(e)
+    )) as Post;
+
+    // current user
+    const currentUserId = req.currentUser && req.currentUser.id;
+    let comments;
+
+    /*
+    * return all of the comments regardless it's comment status
+    * if the current user is the owner of the post
+    * Otherwise, return the approved comments only
+    */
+    if (currentUserId === post.author.id) {
+      comments = await Comment.getAllPostComments(postId).catch((e: Error) =>
+        next(e)
+      );
+    } else {
+      comments = await Comment.getApprovedPostComments(postId).catch(
+        (e: Error) => next(e)
+      );
+    }
 
     if (!comments) {
       next();
@@ -73,7 +94,7 @@ router.post(
       await commentRepo.save(newComment).catch((e: Error) => next(e));
 
       // get unapproved comments
-      const comments = await Comment.getPostCommentsQuery(postId, false).catch(
+      const comments = await Comment.getApprovedPostComments(postId).catch(
         (e: Error) => next(e)
       );
       res.json({ comments });
