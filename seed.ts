@@ -25,11 +25,12 @@ createConnection(options).then(async connection => {
 
   try {
 
-    const passwordSaltHash = await User.getPasswordSaltHash(faker.internet.password());
+    // dummy account password
+    const passwordSaltHash = await User.getPasswordSaltHash('first_user123');
 
-    // seed user
+    // dummy seed user
     const newUser = await userRepo.create({
-      email: faker.internet.email(),
+      email: 'first_user@faker.com',
       ...passwordSaltHash
     });
 
