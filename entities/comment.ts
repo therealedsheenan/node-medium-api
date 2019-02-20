@@ -40,6 +40,8 @@ export class Comment extends BaseEntity {
     return this.createQueryBuilder('comment')
       .where('comment.post.id = :postId', { postId })
       .andWhere('comment.approvedComment = :approved', { approved: true })
+      .innerJoinAndSelect('comment.post', 'post')
+      .select(['comment', 'post.id'])
       .orderBy('comment.createDate', 'ASC')
       .getMany();
   }
@@ -47,6 +49,8 @@ export class Comment extends BaseEntity {
   static getAllPostComments (postId: number) {
     return this.createQueryBuilder('comment')
       .where('comment.post.id = :postId', { postId })
+      .innerJoinAndSelect('comment.post', 'post')
+      .select(['comment', 'post.id'])
       .orderBy('comment.createDate', 'ASC')
       .getMany();
   }
