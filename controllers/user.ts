@@ -4,6 +4,8 @@ import passport from 'passport';
 import { validate } from 'class-validator';
 
 import { User } from '../entities/user';
+import { auth } from '../middlewares/auth';
+import { UserProfile } from '../entities/userProfile';
 
 const router: Router = Router();
 
@@ -39,11 +41,7 @@ router.post(
   '/user/login',
   async (req: Request, res: Response, next: NextFunction) => {
     // passport strategy
-    passport.authenticate('local', { session: false }, (
-      err,
-      user,
-      info
-    ) => {
+    passport.authenticate('local', { session: false }, (err, user, info) => {
       if (err) {
         return next(err);
       }
@@ -53,8 +51,59 @@ router.post(
       } else {
         res.status(422).json(info);
       }
-
     })(req, res, next);
+  }
+);
+
+router.get(
+  '/user/profile',
+  auth.required,
+  async (req: any, res: Response, next: NextFunction) => {
+    const currentUserId = req.currentUser && req.currentUser.id;
+    const currentUserProfile = await User.getById(currentUserId).catch(
+      (e: Error) => next(e)
+    );
+
+    if (currentUserId) {
+      res.json({ user: currentUserProfile });
+    } else {
+      next();
+    }
+  }
+);
+
+router.put(
+  '/user/profile',
+  auth.required,
+  async (req: any, res: Response, next: NextFunction) => {
+    const userProfileBody = req.body && req.body.userProfile;
+    const currentUserId = req.currentUser && req.currentUser.id;
+
+    // get user profile based from the currentUserId
+    const currentUserProfile = (await User.getById(currentUserId).catch(
+      (e: Error) => next(e)
+    )) as User;
+
+    const userProfileRepo = getConnection().getRepository(UserProfile);
+
+    /*
+    * Update userProfile using the currentUserProfile ID
+    * and return the updated user with userProfile object
+    */
+    await userProfileRepo
+      .update({ id: currentUserProfile.userProfile.id }, userProfileBody)
+      .then(async () => {
+        const updatedUserProfile = (await User.getById(currentUserId).catch(
+          (e: Error) => next(e)
+        )) as User;
+
+        if (updatedUserProfile) {
+          res.json({ user: updatedUserProfile });
+        } else {
+          next();
+        }
+      })
+      .catch((e: Error) => next(e));
   }
 );
 

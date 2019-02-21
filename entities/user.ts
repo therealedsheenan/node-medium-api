@@ -74,15 +74,17 @@ export class User extends BaseEntity {
 
   // This function saves one-to-one relationship of User and UserProfile
   static async linkUserProfile (userProfile: UserProfile) {
-    const user = (await this.findById(userProfile.user.id)) as User;
+    const user = (await this.getById(userProfile.user.id)) as User;
     await this.getRepository().update(user.id, {
       userProfile
     });
   }
 
-  static findById (id: string | number) {
+  static getById (id: string | number) {
     return this.createQueryBuilder(queryString)
       .where('user.id = :id', { id })
+      .innerJoinAndSelect('user.userProfile', 'userProfile')
+      .select(['user.id', 'user.email', 'userProfile'])
       .getOne();
   }
 

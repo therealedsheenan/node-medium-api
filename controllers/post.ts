@@ -73,7 +73,7 @@ router.post(
     const postRepo = getConnection().getRepository(Post);
 
     // get current logged in user
-    const currentUser = await User.findById(req.currentUser.id).catch(
+    const currentUser = await User.getById(req.currentUser.id).catch(
       (e: Error) => next(e)
     );
 
