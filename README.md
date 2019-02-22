@@ -12,9 +12,9 @@ $ npm install # yarn
 $ npm run build # yarn build
 ```
 
-## Run server
+## Run developmentserver
 ```
-$ npm run server # yarn server
+$ npm run dev # yarn dev
 ```
 
 ### Migrations
