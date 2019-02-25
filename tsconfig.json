@@ -35,5 +35,8 @@
   ],
   "exclude": [
     "seed.ts"
+  ],
+  "files": [
+    "custom.d.ts"
   ]
 }
