@@ -16,7 +16,7 @@ const router: Router = Router();
 router.get(
   '/post/:postId/comments/',
   auth.optional,
-  async (req: any, res: Response, next: NextFunction) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     const postId = req.params.postId;
     const post = (await Post.getById(postId).catch((e: Error) =>
       next(e)
@@ -106,7 +106,7 @@ router.post(
 router.put(
   '/comment/:commentId/approve',
   auth.required,
-  async (req: any, res: Response, next: NextFunction) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     const commentId = req.params.commentId;
     const commentApprove = req.body.comment && req.body.comment.approvedComment;
     const commentRepo = getConnection().getRepository(Comment);

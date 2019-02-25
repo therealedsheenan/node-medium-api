@@ -27,7 +27,7 @@ router.get(
 router.get(
   '/posts/draft',
   auth.required,
-  async (req: any, res: Response, next: NextFunction) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     const currentUserId = req.currentUser.id;
     const posts = await Post.getAllDraftPosts(currentUserId).catch((e: Error) =>
       next(e)
@@ -44,7 +44,7 @@ router.get(
 router.get(
   '/post/:postId',
   auth.optional,
-  async (req: any, res: Response, next: NextFunction) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     const postId = req.params.postId;
     const currentUserId = req.currentUser && req.currentUser.id;
     const post = (await Post.getById(postId).catch((e: Error) =>
@@ -67,7 +67,7 @@ router.get(
 router.post(
   '/post/new',
   auth.required,
-  async (req: any, res: Response, next: NextFunction) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     // comments data
     const postBody = req.body.post;
     const postRepo = getConnection().getRepository(Post);

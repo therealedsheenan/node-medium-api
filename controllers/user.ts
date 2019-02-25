@@ -58,7 +58,7 @@ router.post(
 router.get(
   '/user/profile',
   auth.required,
-  async (req: any, res: Response, next: NextFunction) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     const currentUserId = req.currentUser && req.currentUser.id;
     const currentUserProfile = await User.getById(currentUserId).catch(
       (e: Error) => next(e)
@@ -75,7 +75,7 @@ router.get(
 router.put(
   '/user/profile',
   auth.required,
-  async (req: any, res: Response, next: NextFunction) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     const userProfileBody = req.body && req.body.userProfile;
     const currentUserId = req.currentUser && req.currentUser.id;
 
