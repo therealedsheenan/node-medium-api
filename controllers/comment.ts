@@ -6,6 +6,7 @@ import { Comment } from '../entities/comment';
 
 import { auth } from '../middlewares/auth';
 import { Post } from '../entities/post';
+import { RequestCustom } from '../index';
 
 const router: Router = Router();
 
@@ -14,11 +15,11 @@ const router: Router = Router();
  * can pass ?approved=true|false
  */
 const getPostComments = async (
-  req: Request,
+  req: RequestCustom,
   res: Response,
   next: NextFunction
 ) => {
-  const postId = req.params.postId;
+  const postId = parseInt(req.params.postId, 10);
   const post = (await Post.getById(postId).catch((e: Error) =>
     next(e)
   )) as Post;
@@ -67,7 +68,7 @@ const getComment = async (req: Request, res: Response, next: NextFunction) => {
 
 // Create new comment
 const newComment = async (req: Request, res: Response, next: NextFunction) => {
-  const postId = req.params.postId;
+  const postId = parseInt(req.params.postId, 10);
   // comments data
   const commentBody = req.body.comment;
   const commentRepo = getConnection().getRepository(Comment);
@@ -97,11 +98,7 @@ const newComment = async (req: Request, res: Response, next: NextFunction) => {
 };
 
 // Update comment via :commentID
-const approveComment = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+const approveComment = async (req: any, res: Response, next: NextFunction) => {
   const commentId = req.params.commentId;
   const commentApprove = req.body.comment && req.body.comment.approvedComment;
   const commentRepo = getConnection().getRepository(Comment);

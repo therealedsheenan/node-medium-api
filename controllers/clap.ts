@@ -7,7 +7,7 @@ const router: Router = Router();
 
 // Get claps count of a post
 const getClaps = async (req: Request, res: Response, next: NextFunction) => {
-  const postId = req.params.postId;
+  const postId = parseInt(req.params.postId, 10);
   const claps = await Clap.getClapsCount(postId).catch((e: Error) => next(e));
 
   if (!claps) {
@@ -20,7 +20,7 @@ const getClaps = async (req: Request, res: Response, next: NextFunction) => {
 
 // Create clap to post
 const createClap = async (req: Request, res: Response, next: NextFunction) => {
-  const postId = req.params.postId;
+  const postId = parseInt(req.params.postId, 10) as any;
   const newClap = await Clap.create({ post: postId });
   const clapRepo = getConnection().getRepository(Clap);
 

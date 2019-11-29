@@ -5,6 +5,7 @@ import { validate } from 'class-validator';
 import { Post } from '../entities/post';
 import { User } from '../entities/user';
 import { auth } from '../middlewares/auth';
+import { RequestCustom } from '../index';
 
 const router: Router = Router();
 
@@ -20,7 +21,7 @@ const getAllPosts = async (req: Request, res: Response, next: NextFunction) => {
 
 // Get all draft posts
 const getDraftPosts = async (
-  req: Request,
+  req: RequestCustom,
   res: Response,
   next: NextFunction
 ) => {
@@ -36,7 +37,11 @@ const getDraftPosts = async (
 };
 
 // Get post via :postID
-const getPost = async (req: Request, res: Response, next: NextFunction) => {
+const getPost = async (
+  req: RequestCustom,
+  res: Response,
+  next: NextFunction
+) => {
   const postId = req.params.postId;
   const currentUserId = req.currentUser && req.currentUser.id;
   const post = (await Post.getById(postId).catch((e: Error) =>
@@ -55,13 +60,17 @@ const getPost = async (req: Request, res: Response, next: NextFunction) => {
 };
 
 // Create new post
-const createPost = async (req: Request, res: Response, next: NextFunction) => {
+const createPost = async (
+  req: RequestCustom,
+  res: Response,
+  next: NextFunction
+) => {
   // comments data
   const postBody = req.body.post;
   const postRepo = getConnection().getRepository(Post);
 
   // get current logged in user
-  const currentUser = await User.getById(req.currentUser.id).catch((e: Error) =>
+  const currentUser = await User.getById(parseInt(req.currentUser.id, 10)).catch((e: Error) =>
     next(e)
   );
 
@@ -90,7 +99,7 @@ const createPost = async (req: Request, res: Response, next: NextFunction) => {
 
 // Update post via :postId
 const updatePost = async (req: Request, res: Response, next: NextFunction) => {
-  const postId = req.params.postId;
+  const postId = parseInt(req.params.postId, 10);
   const postBody = req.body.post;
   const postRepo = getConnection().getRepository(Post);
 
@@ -107,7 +116,7 @@ const updatePost = async (req: Request, res: Response, next: NextFunction) => {
 
 // Delete post via :postID
 const deletePost = async (req: Request, res: Response, next: NextFunction) => {
-  const postId = req.params.postId;
+  const postId = parseInt(req.params.postId, 10);
   const postRepo = getConnection().getRepository(Post);
 
   // nullify publish date

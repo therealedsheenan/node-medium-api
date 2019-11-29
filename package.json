@@ -28,6 +28,7 @@
   },
   "homepage": "https://github.com/therealedsheenan/typescript-gen#readme",
   "dependencies": {
+    "@types/express-serve-static-core": "^4.17.0",
     "body-parser": "^1.18.3",
     "class-validator": "^0.9.1",
     "cors": "^2.8.5",

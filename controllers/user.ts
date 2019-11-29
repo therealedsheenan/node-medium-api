@@ -6,6 +6,7 @@ import { validate } from 'class-validator';
 import { User } from '../entities/user';
 import { auth } from '../middlewares/auth';
 import { UserProfile } from '../entities/userProfile';
+import { RequestCustom } from '../index';
 
 const router: Router = Router();
 
@@ -50,7 +51,7 @@ const loginUser = async (req: Request, res: Response, next: NextFunction) => {
 };
 
 const getUserProfile = async (
-  req: Request,
+  req: RequestCustom,
   res: Response,
   next: NextFunction
 ) => {
@@ -67,7 +68,7 @@ const getUserProfile = async (
 };
 
 const updateUserProfile = async (
-  req: Request,
+  req: RequestCustom,
   res: Response,
   next: NextFunction
 ) => {
