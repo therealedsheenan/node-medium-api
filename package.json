@@ -30,7 +30,7 @@
   "dependencies": {
     "@types/express-serve-static-core": "^4.17.0",
     "body-parser": "^1.18.3",
-    "class-validator": "^0.9.1",
+    "class-validator": "^0.14.0",
     "cors": "^2.8.5",
     "crypto": "^1.0.1",
     "debug": "^4.1.1",
